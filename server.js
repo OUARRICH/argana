@@ -14,11 +14,8 @@ app.use(bodyParser.json());
 var distDir = __dirname + "/dist/";
 app.use(express.static(distDir));
 
-//app.use(express.static(path.join(__dirname, 'public')))
-  // .set('views', path.join(__dirname, 'views'))
-  // .set('view engine', 'ejs')
-  // .get('/', (req, res) => res.render('pages/index'))
-  app.listen(PORT, () => console.log(`Argana app is now Listening on ${PORT}`));
+//Test running app without connecting to database
+app.listen(PORT, () => console.log(`Argana app is now Listening on ${PORT}`));
 
 // Create a database variable outside of the database connection callback to reuse the connection pool in your app.
 // var db;
