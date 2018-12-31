@@ -2,6 +2,7 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var mongodb = require("mongodb");
 var ObjectID = mongodb.ObjectID;
+const path = require('path');
 
 var CONTACTS_COLLECTION = "contacts";
 
@@ -10,7 +11,7 @@ app.use(bodyParser.json());
 
 // Create link to Angular build directory
 var distDir = __dirname + "/dist/";
-app.use(express.static(distDir));
+app.use(express.static(path.join(__dirname, 'dist')));
 
 //app.use(express.static(path.join(__dirname, 'public')))
   // .set('views', path.join(__dirname, 'views'))
