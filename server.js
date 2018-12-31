@@ -3,6 +3,7 @@ var bodyParser = require("body-parser");
 var mongodb = require("mongodb");
 var ObjectID = mongodb.ObjectID;
 const path = require('path');
+const PORT = process.env.PORT || 5000
 
 var CONTACTS_COLLECTION = "contacts";
 
@@ -11,13 +12,13 @@ app.use(bodyParser.json());
 
 // Create link to Angular build directory
 var distDir = __dirname + "/dist/";
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(distDir));
 
 //app.use(express.static(path.join(__dirname, 'public')))
   // .set('views', path.join(__dirname, 'views'))
   // .set('view engine', 'ejs')
   // .get('/', (req, res) => res.render('pages/index'))
-  app.listen('8080', () => console.log('Listening on 8080'));
+  app.listen(PORT, () => console.log(`Argana app is now Listening on ${PORT}`));
 
 // Create a database variable outside of the database connection callback to reuse the connection pool in your app.
 // var db;
