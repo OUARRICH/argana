@@ -6,7 +6,9 @@ var ObjectID = mongodb.ObjectID;
 const path = require('path');
 const PORT = process.env.PORT || 5000
 
-var PRODUCTS_COLLECTION = "products";
+const PRODUCTS_COLLECTION = 'products';
+const ORDERS_COLLECTION = 'orders';
+const CUSTOMERS_COLLECTIONS = 'customers';
 
 var app = express();
 app.use(bodyParser.json());
@@ -20,7 +22,7 @@ app.use(express.static(distDir));
 app.listen(PORT, () => console.log(`Argana app is now Listening on ${PORT}`));
 
 // Create a database variable outside of the database connection callback to reuse the connection pool in your app.
-// var db;
+var db;
 
 // // Connect to the database before starting the application server.
 // mongodb.MongoClient.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/argana", function (err, client) {
@@ -40,18 +42,12 @@ app.listen(PORT, () => console.log(`Argana app is now Listening on ${PORT}`));
 //   });
 // });
 
-// // CONTACTS API ROUTES BELOW
-
 // // Generic error handler used by all endpoints.
 function handleError(res, reason, message, code) {
   console.log("ERROR: " + reason);
   res.status(code || 500).json({"error": message});
 }
 
-// /*  "/api/contacts"
-//  *    GET: finds all contacts
-//  *    POST: creates a new contact
-//  */
 // app.get("/api/products", function(req, res) {
 //   db.collection(PRODUCTS_COLLECTION).find({}).toArray(function(err, docs) {
 //     if (err) {
@@ -61,6 +57,33 @@ function handleError(res, reason, message, code) {
 //     }
 //   });
 // });
+
+// app.get('/api/orders', (req, res) => {
+//   db.collection(ORDERS_COLLECTION)
+//   .aggregate([
+//     {
+//       $lookup:
+//         {
+//           from: CUSTOMERS_COLLECTIONS,
+//           localField: "customerId",
+//           foreignField: "_id",
+//           as: "customer"
+//         }
+//     }
+//   ])
+//   .sort({orderDate: -1})
+//   .toArray((err, docs) => {
+//     if(err) {
+//       handleError(res, err.message, 'Failed to get orders.');
+//     } else {
+//       res.status(200).json(docs);
+//     }
+//   });
+// });
+
+app.get('*', (req, res) => {
+  res.sendfile(`${distDir}index.html`);
+});
 
 // app.post("/api/contacts", function(req, res) {
 //   var newContact = req.body;
