@@ -22,7 +22,7 @@ app.use(express.static(distDir));
 app.listen(PORT, () => console.log(`Argana app is now Listening on ${PORT}`));
 
 // Create a database variable outside of the database connection callback to reuse the connection pool in your app.
-var db;
+// var db;
 
 // // Connect to the database before starting the application server.
 // mongodb.MongoClient.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/argana", function (err, client) {
@@ -48,38 +48,58 @@ function handleError(res, reason, message, code) {
   res.status(code || 500).json({"error": message});
 }
 
-// app.get("/api/products", function(req, res) {
-//   db.collection(PRODUCTS_COLLECTION).find({}).toArray(function(err, docs) {
-//     if (err) {
-//       handleError(res, err.message, "Failed to get products.");
-//     } else {
-//       res.status(200).json(docs);
-//     }
-//   });
-// });
+/**
+ * Products APIs
+ */
+app.get("/api/products", function(req, res) {
+  db.collection(PRODUCTS_COLLECTION).find({}).toArray(function(err, docs) {
+    if (err) {
+      handleError(res, err.message, "Failed to get products.");
+    } else {
+      res.status(200).json(docs);
+    }
+  });
+});
 
-// app.get('/api/orders', (req, res) => {
-//   db.collection(ORDERS_COLLECTION)
-//   .aggregate([
-//     {
-//       $lookup:
-//         {
-//           from: CUSTOMERS_COLLECTIONS,
-//           localField: "customerId",
-//           foreignField: "_id",
-//           as: "customer"
-//         }
-//     }
-//   ])
-//   .sort({orderDate: -1})
-//   .toArray((err, docs) => {
-//     if(err) {
-//       handleError(res, err.message, 'Failed to get orders.');
-//     } else {
-//       res.status(200).json(docs);
-//     }
-//   });
-// });
+app.put("/api/products/:id", function(req, res) {
+  var updateDoc = req.body;
+  delete updateDoc._id;
+
+  db.collection(PRODUCTS_COLLECTION).updateOne({_id: new ObjectID(req.params.id)}, { $set: {...updateDoc}}, function(err, doc) {
+    if (err) {
+      handleError(res, err.message, "Failed to update product");
+    } else {
+      updateDoc._id = req.params.id;
+      res.status(200).json(updateDoc);
+    }
+  });
+});
+
+ /**
+  * Orders APIs
+  */
+app.get('/api/orders', (req, res) => {
+  db.collection(ORDERS_COLLECTION)
+  .aggregate([
+    {
+      $lookup:
+        {
+          from: CUSTOMERS_COLLECTIONS,
+          localField: "customerId",
+          foreignField: "_id",
+          as: "customer"
+        }
+    }
+  ])
+  .sort({orderDate: -1})
+  .toArray((err, docs) => {
+    if(err) {
+      handleError(res, err.message, 'Failed to get orders.');
+    } else {
+      res.status(200).json(docs);
+    }
+  });
+});
 
 app.get('*', (req, res) => {
   res.sendfile(`${distDir}index.html`);
@@ -114,20 +134,6 @@ app.get('*', (req, res) => {
 //       handleError(res, err.message, "Failed to get contact");
 //     } else {
 //       res.status(200).json(doc);
-//     }
-//   });
-// });
-
-// app.put("/api/contacts/:id", function(req, res) {
-//   var updateDoc = req.body;
-//   delete updateDoc._id;
-
-//   db.collection(CONTACTS_COLLECTION).updateOne({_id: new ObjectID(req.params.id)}, updateDoc, function(err, doc) {
-//     if (err) {
-//       handleError(res, err.message, "Failed to update contact");
-//     } else {
-//       updateDoc._id = req.params.id;
-//       res.status(200).json(updateDoc);
 //     }
 //   });
 // });
